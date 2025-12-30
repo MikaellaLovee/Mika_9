@@ -99,8 +99,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f0f0f0;
+            background-color: #1a5276;
             margin: 0 auto;
+            position: relative;
         }
         
         .developer-photo {
@@ -254,6 +255,24 @@
         .loading {
             background-color: rgba(204, 229, 255, 0.95);
             color: #004085;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #004085;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .console {
@@ -530,6 +549,44 @@
         .button-group .btn {
             margin: 0;
         }
+        
+        /* Стили для быстрой анимации прогресс-бара */
+        .fast-progress {
+            animation: fastProgress 2s linear infinite;
+            background: linear-gradient(90deg, 
+                var(--blue-light) 0%, 
+                var(--blue-accent) 25%, 
+                var(--blue-light) 50%, 
+                var(--blue-accent) 75%, 
+                var(--blue-light) 100%);
+            background-size: 200% 100%;
+        }
+        
+        @keyframes fastProgress {
+            0% {
+                background-position: 200% 0;
+                width: 0%;
+            }
+            50% {
+                width: 100%;
+            }
+            100% {
+                background-position: -200% 0;
+                width: 0%;
+            }
+        }
+        
+        /* Стили для placeholder, если фото не загрузилось */
+        .photo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
@@ -539,7 +596,8 @@
                 <div class="header-content">
                     <div class="developer-info">
                         <div class="developer-photo-container">
-                            <img id="developerPhoto" alt="Николаева Наталья" class="developer-photo">
+                            <!-- Фото разработчика из файла stolica.jpg -->
+                            <img id="developer-photo-img" src="stolica.jpg" alt="Николаева Наталья" class="developer-photo" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\"photo-placeholder\">НН</div>
                         </div>
                         <div class="developer-text">
                             <h2>Николаева Наталья</h2>
@@ -559,38 +617,29 @@
             <!-- Секция 1: Асинхронные задачи -->
             <section class="section">
                 <h2>Часть 1: Асинхронные функции с await</h2>
-                <p>Профиль пользователя загружается автоматически при загрузке страницы. Нажмите кнопку, чтобы запустить оставшиеся две задачи последовательно.</p>
+                <p>Нажмите кнопку, чтобы запустить задачи последовательно.</p>
                 
                 <div class="task-container">
                     <div class="task-card">
-                        <h3>Задача 1: Загрузка профиля пользователя</h3>
-                        <p>Имитирует загрузку данных профиля пользователя с сервера.</p>
-                        <div id="task1-status" class="status pending">Загрузка...</div>
+                        <h3>Задача 1: Загрузка истории заказов</h3>
+                        <p>Имитирует загрузку истории заказов пользователя.</p>
+                        <div id="task1-status" class="status pending">Ожидание запуска</div>
                         <div class="progress-bar">
                             <div id="task1-progress" class="progress"></div>
                         </div>
                     </div>
                     
                     <div class="task-card">
-                        <h3>Задача 2: Загрузка истории заказов</h3>
-                        <p>Имитирует загрузку истории заказов пользователя.</p>
+                        <h3>Задача 2: Загрузка рекомендаций</h3>
+                        <p>Имитирует загрузку персональных рекомендаций.</p>
                         <div id="task2-status" class="status pending">Ожидание запуска</div>
                         <div class="progress-bar">
                             <div id="task2-progress" class="progress"></div>
                         </div>
                     </div>
-                    
-                    <div class="task-card">
-                        <h3>Задача 3: Загрузка рекомендаций</h3>
-                        <p>Имитирует загрузку персональных рекомендаций.</p>
-                        <div id="task3-status" class="status pending">Ожидание запуска</div>
-                        <div class="progress-bar">
-                            <div id="task3-progress" class="progress"></div>
-                        </div>
-                    </div>
                 </div>
                 
-                <button id="runRemainingTasksBtn" class="btn">Запустить оставшиеся задачи</button>
+                <button id="runTasksBtn" class="btn">Запустить задачи</button>
                 
                 <div class="console">
                     <h3>Консоль выполнения:</h3>
@@ -668,97 +717,6 @@
     </div>
 
     <script>
-        // Упрощенная и улучшенная функция для загрузки фото разработчика
-        function loadDeveloperPhoto() {
-            const photo = document.getElementById('developerPhoto');
-            
-            // Пробуем загрузить изображение stolica.jpg
-            // Сначала проверяем разные возможные пути
-            const photoPaths = [
-                'stolica.jpg',
-                './stolica.jpg',
-                'images/stolica.jpg',
-                'photo/stolica.jpg',
-                '../stolica.jpg',
-                'https://via.placeholder.com/150/1a5276/FFFFFF?text=НН' // Запасной вариант
-            ];
-            
-            let currentAttempt = 0;
-            
-            function tryNextPath() {
-                if (currentAttempt >= photoPaths.length) {
-                    console.log("Все попытки загрузки фото не удались, создаем SVG-заглушку");
-                    createSVGPlaceholder();
-                    return;
-                }
-                
-                const path = photoPaths[currentAttempt];
-                console.log(`Попытка загрузки фото: ${path}`);
-                
-                const testImage = new Image();
-                
-                testImage.onload = function() {
-                    console.log(`Фото успешно загружено: ${path}`);
-                    photo.src = path;
-                    photo.alt = 'Николаева Наталья';
-                    
-                    // Если это placeholder, делаем его квадратным
-                    if (path.includes('placeholder.com')) {
-                        photo.style.objectFit = 'contain';
-                        photo.style.backgroundColor = '#1a5276';
-                    }
-                };
-                
-                testImage.onerror = function() {
-                    console.log(`Не удалось загрузить фото: ${path}`);
-                    currentAttempt++;
-                    
-                    // Попробовать следующий путь через небольшую задержку
-                    setTimeout(tryNextPath, 100);
-                };
-                
-                testImage.src = path;
-            }
-            
-            // Начинаем попытки загрузки
-            tryNextPath();
-        }
-        
-        // Функция для создания SVG placeholder
-        function createSVGPlaceholder() {
-            const photo = document.getElementById('developerPhoto');
-            const container = document.querySelector('.developer-photo-container');
-            
-            // Создаем простой SVG placeholder
-            const svgContent = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
-                    <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#1a5276;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#0d3b5c;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="75" cy="75" r="70" fill="url(#gradient)" stroke="white" stroke-width="4"/>
-                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-family="Arial" font-size="36" font-weight="bold">НН</text>
-                </svg>
-            `;
-            
-            // Преобразуем SVG в Data URL
-            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
-            const url = URL.createObjectURL(svgBlob);
-            
-            photo.src = url;
-            photo.alt = 'Николаева Наталья (заглушка)';
-            
-            // Очищаем URL после загрузки
-            photo.onload = function() {
-                URL.revokeObjectURL(url);
-            };
-            
-            // Если фото не загрузилось, добавляем фон
-            container.style.backgroundColor = '#1a5276';
-        }
-        
         // Функция для логирования в консоль на странице
         function logToConsole(message, type = "info") {
             const consoleOutput = document.getElementById('console-output');
@@ -780,6 +738,33 @@
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
         
+        // Функция для проверки загрузки фото разработчика
+        function checkDeveloperPhoto() {
+            const photoImg = document.getElementById('developer-photo-img');
+            if (photoImg) {
+                // Проверяем, загрузилось ли фото
+                photoImg.onload = function() {
+                    logToConsole("Фото разработчика успешно загружено", "success");
+                };
+                
+                photoImg.onerror = function() {
+                    // Если фото не загрузилось, создаем placeholder
+                    const container = photoImg.parentElement;
+                    container.innerHTML = '<div class="photo-placeholder">НН</div>';
+                    logToConsole("Фото разработчика не загружено, используется placeholder", "warning");
+                    logToConsole("Убедитесь, что файл 'stolica.jpg' находится в той же папке, что и HTML-файл", "info");
+                };
+                
+                // Дополнительная проверка через 2 секунды
+                setTimeout(() => {
+                    if (photoImg.complete && photoImg.naturalHeight === 0) {
+                        // Фото не загрузилось
+                        photoImg.onerror();
+                    }
+                }, 2000);
+            }
+        }
+        
         // Функция для обновления прогресс-бара
         function updateProgress(taskId, progress) {
             const progressBar = document.getElementById(`task${taskId}-progress`);
@@ -788,78 +773,59 @@
             }
         }
         
-        // Асинхронная функция 1: Имитация загрузки профиля пользователя
-        async function loadUserProfile() {
-            logToConsole("Задача 1: Начало загрузки профиля пользователя...", "info");
+        // Асинхронная функция 1: Имитация загрузки истории заказов
+        async function loadOrderHistory() {
+            logToConsole("Задача 1: Начало загрузки истории заказов...", "info");
             document.getElementById('task1-status').className = 'status loading';
             document.getElementById('task1-status').textContent = 'Выполняется...';
             
             // Имитация асинхронной операции с прогрессом
-            for (let i = 0; i <= 100; i += 20) {
-                updateProgress(1, i);
-                await new Promise(resolve => setTimeout(resolve, 300));
-            }
-            
-            logToConsole("Задача 1: Профиль пользователя успешно загружен!", "success");
-            document.getElementById('task1-status').className = 'status completed';
-            document.getElementById('task1-status').textContent = 'Завершено';
-            
-            return { name: "Иван Иванов", email: "ivan@example.com", id: 12345 };
-        }
-        
-        // Асинхронная функция 2: Имитация загрузки истории заказов
-        async function loadOrderHistory() {
-            logToConsole("Задача 2: Начало загрузки истории заказов...", "info");
-            document.getElementById('task2-status').className = 'status loading';
-            document.getElementById('task2-status').textContent = 'Выполняется...';
-            
-            // Имитация асинхронной операции с прогрессом
             for (let i = 0; i <= 100; i += 10) {
-                updateProgress(2, i);
+                updateProgress(1, i);
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
             
-            logToConsole("Задача 2: История заказов успешно загружена!", "success");
-            document.getElementById('task2-status').className = 'status completed';
-            document.getElementById('task2-status').textContent = 'Завершено';
+            logToConsole("Задача 1: История заказов успешно загружена!", "success");
+            document.getElementById('task1-status').className = 'status completed';
+            document.getElementById('task1-status').textContent = 'Завершено';
             
             return { orders: 5, totalAmount: 12500, lastOrder: "2023-10-15" };
         }
         
-        // Асинхронная функция 3: Имитация загрузки рекомендаций
+        // Асинхронная функция 2: Имитация загрузки рекомендаций
         async function loadRecommendations() {
-            logToConsole("Задача 3: Начало загрузки персональных рекомендаций...", "info");
-            document.getElementById('task3-status').className = 'status loading';
-            document.getElementById('task3-status').textContent = 'Выполняется...';
+            logToConsole("Задача 2: Начало загрузки персональных рекомендаций...", "info");
+            document.getElementById('task2-status').className = 'status loading';
+            document.getElementById('task2-status').textContent = 'Выполняется...';
             
             // Имитация асинхронной операции с прогрессом
             for (let i = 0; i <= 100; i += 25) {
-                updateProgress(3, i);
+                updateProgress(2, i);
                 await new Promise(resolve => setTimeout(resolve, 300));
             }
             
-            logToConsole("Задача 3: Рекомендации успешно загружены!", "success");
-            document.getElementById('task3-status').className = 'status completed';
-            document.getElementById('task3-status').textContent = 'Завершено';
+            logToConsole("Задача 2: Рекомендации успешно загружены!", "success");
+            document.getElementById('task2-status').className = 'status completed';
+            document.getElementById('task2-status').textContent = 'Завершено';
             
             return { recommendations: ["Товар A", "Товар B", "Товар C"] };
         }
         
-        // Функция для запуска оставшихся задач (задача 2 и 3)
-        async function runRemainingTasks() {
-            logToConsole("=== Начало выполнения оставшихся задач ===", "success");
+        // Функция для запуска задач
+        async function runTasks() {
+            logToConsole("=== Начало выполнения задач ===", "success");
             
-            // Сбросим статусы и прогресс-бары для задач 2 и 3
+            // Сбросим статусы и прогресс-бары для задач
+            document.getElementById('task1-status').className = 'status pending';
+            document.getElementById('task1-status').textContent = 'Ожидание запуска';
             document.getElementById('task2-status').className = 'status pending';
             document.getElementById('task2-status').textContent = 'Ожидание запуска';
-            document.getElementById('task3-status').className = 'status pending';
-            document.getElementById('task3-status').textContent = 'Ожидание запуска';
             
+            document.getElementById('task1-progress').style.width = '0%';
             document.getElementById('task2-progress').style.width = '0%';
-            document.getElementById('task3-progress').style.width = '0%';
             
             // Отключаем кнопку на время выполнения
-            const runBtn = document.getElementById('runRemainingTasksBtn');
+            const runBtn = document.getElementById('runTasksBtn');
             const originalText = runBtn.textContent;
             runBtn.textContent = 'Выполняется...';
             runBtn.disabled = true;
@@ -872,7 +838,7 @@
                 const recommendations = await loadRecommendations();
                 logToConsole(`Получено рекомендаций: ${recommendations.recommendations.length}`, "info");
                 
-                logToConsole("=== Все оставшиеся задачи успешно завершены! ===", "success");
+                logToConsole("=== Все задачи успешно завершены! ===", "success");
             } catch (error) {
                 logToConsole(`Ошибка при выполнении задач: ${error.message}`, "error");
             } finally {
@@ -1185,11 +1151,13 @@
         
         // Инициализация событий после загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
-            // Загружаем фото разработчика сразу при загрузке страницы
-            loadDeveloperPhoto();
+            logToConsole("Страница загружена.", "success");
+            
+            // Проверяем загрузку фото разработчика
+            checkDeveloperPhoto();
             
             // Привязываем обработчики событий
-            document.getElementById('runRemainingTasksBtn').addEventListener('click', runRemainingTasks);
+            document.getElementById('runTasksBtn').addEventListener('click', runTasks);
             document.getElementById('loadCurrencyBtn').addEventListener('click', loadCurrencyRates);
             document.getElementById('loadCurrencyLocalBtn').addEventListener('click', loadDemoCurrencyRates);
             document.getElementById('feedbackForm').addEventListener('submit', submitFeedback);
@@ -1197,15 +1165,8 @@
             // Инициализируем рейтинг
             setupRating();
             
-            // Автоматически загружаем профиль пользователя при загрузке страницы
-            setTimeout(() => {
-                loadUserProfile();
-            }, 1000);
-            
             // Автоматически загружаем курсы валют при загрузке страницы
             setTimeout(loadCurrencyRates, 1500);
-            
-            logToConsole("Страница загружена. Загрузка профиля пользователя...", "success");
             
             // Добавляем эффект при наведении на кнопки
             const buttons = document.querySelectorAll('.btn');
