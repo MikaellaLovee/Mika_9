@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Асинхронные функции и работа с API</title>
+    <style>
+        :root {
+            --blue-light: #1a5276;
+            --blue-dark: #0d3b5c;
+            --blue-accent: #2980b9;
+            --red: #e74c3c;
+            --black: #2c3e50;
+            --white: #ecf0f1;
+            --gray: #bdc3c7;
+            --blue-gradient: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
+            --overlay-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            padding-bottom: 40px;
+            /* Новый фон с текстурами снежинок */
+            background-image: url('https://textur.gas-kvas.com/uploads/posts/2024-10/textur-gas-kvas-com-hmet-p-teksturi-snezhinki-4.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: var(--blue-gradient);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .developer-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .developer-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f0f0f0;
+        }
+        
+        .developer-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .developer-text {
+            flex: 1;
+        }
+        
+        .developer-text h2 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .developer-text p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .page-title {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            background-color: var(--overlay-color);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--blue-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+        
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section h2 {
+            color: var(--blue-dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(189, 195, 199, 0.5);
+        }
+        
+        .btn {
+            background-color: var(--blue-light);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            background-color: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .task-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .task-card {
+            background-color: rgba(249, 249, 249, 0.95);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--blue-light);
+            transition: transform 0.3s ease;
+        }
+        
+        .task-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .task-card h3 {
+            color: var(--black);
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .pending {
+            background-color: rgba(255, 243, 205, 0.95);
+            color: #856404;
+        }
+        
+        .completed {
+            background-color: rgba(212, 237, 218, 0.95);
+            color: #155724;
+        }
+        
+        .error {
+            background-color: rgba(248, 215, 218, 0.95);
+            color: #721c24;
+        }
+        
+        .loading {
+            background-color: rgba(204, 229, 255, 0.95);
+            color: #004085;
+        }
+        
+        .console {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            background-color: rgba(44, 62, 80, 0.95);
+        }
+        
+        .console-line {
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+        
+        .console-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .console-message {
+            color: white;
+        }
+        
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .currency-card {
+            background: linear-gradient(135deg, rgba(245, 247, 250, 0.95) 0%, rgba(228, 237, 245, 0.95) 100%);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(26, 82, 118, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .currency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .currency-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--blue-dark);
+        }
+        
+        .currency-rate {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--black);
+        }
+        
+        .currency-change {
+            font-size: 0.9rem;
+        }
+        
+        .positive {
+            color: #27ae60;
+        }
+        
+        .negative {
+            color: var(--red);
+        }
+        
+        .feedback-form {
+            background-color: rgba(249, 249, 249, 0.95);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid rgba(26, 82, 118, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--black);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .form-control:focus {
+            border-color: var(--blue-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+            background-color: white;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .rating {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            align-items: center;
+        }
+        
+        .rating-stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+        
+        .rating input {
+            display: none;
+        }
+        
+        .rating label {
+            font-size: 2rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.3s, transform 0.2s;
+            order: 1;
+        }
+        
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating-stars input:checked ~ label {
+            color: #ffc107;
+        }
+        
+        .rating label:hover {
+            transform: scale(1.2);
+        }
+        
+        .rating-value {
+            margin-left: 15px;
+            font-weight: 600;
+            color: var(--blue-dark);
+            min-width: 80px;
+        }
+        
+        .rating.disabled label {
+            cursor: default;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 20px;
+            border-top: 1px solid rgba(189, 195, 199, 0.5);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+        }
+        
+        .inspiration-link {
+            color: var(--blue-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .inspiration-link:hover {
+            color: var(--blue-dark);
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .task-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .currency-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .developer-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .developer-photo {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            body {
+                background-attachment: scroll;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(224, 224, 224, 0.8);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--blue-light);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        /* Улучшение контрастности текста на фоне */
+        .section p, .section li, .section td, .section th {
+            color: #333;
+        }
+        
+        /* Увеличим прозрачность секций для лучшей читаемости на новом фоне */
+        .task-card, .currency-card, .feedback-form, .console {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .section {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="developer-info">
+                    <!-- Изображение будет загружено через JavaScript -->
+                    <img id="developerPhoto" alt="Николаева Наталья" class="developer-photo">
+                    <div class="developer-text">
+                        <h2>Николаева Наталья</h2>
+                        <p>Full-stack разработчик с опытом работы с современными веб-технологиями и асинхронным программированием</p>
+                        <!-- Удален блок с надписями навыков -->
+                    </div>
+                </div>
+                
+                <div class="page-title">
+                    <h1>Асинхронные функции и работа с API</h1>
+                    <p class="subtitle">Демонстрация асинхронного JavaScript, получения данных с API и формы обратной связи</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Секция 1: Асинхронные задачи -->
+        <section class="section">
+            <h2>Часть 1: Асинхронные функции с await</h2>
+            <p>Профиль пользователя загружается автоматически при загрузке страницы. Нажмите кнопку, чтобы запустить оставшиеся две задачи последовательно.</p>
+            
+            <div class="task-container">
+                <div class="task-card">
+                    <h3>Задача 1: Загрузка профиля пользователя</h3>
+                    <p>Имитирует загрузку данных профиля пользователя с сервера.</p>
+                    <div id="task1-status" class="status pending">Загрузка...</div>
+                    <div class="progress-bar">
+                        <div id="task1-progress" class="progress"></div>
+                    </div>
+                </div>
+                
+                <div class="task-card">
+                    <h3>Задача 2: Загрузка истории заказов</h3>
+                    <p>Имитирует загрузку истории заказов пользователя.</p>
+                    <div id="task2-status" class="status pending">Ожидание запуска</div>
+                    <div class="progress-bar">
+                        <div id="task2-progress" class="progress"></div>
+                    </div>
+                </div>
+                
+                <div class="task-card">
+                    <h3>Задача 3: Загрузка рекомендаций</h3>
+                    <p>Имитирует загрузку персональных рекомендаций.</p>
+                    <div id="task3-status" class="status pending">Ожидание запуска</div>
+                    <div class="progress-bar">
+                        <div id="task3-progress" class="progress"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="runRemainingTasksBtn" class="btn">Запустить оставшиеся задачи</button>
+            
+            <div class="console">
+                <h3>Консоль выполнения:</h3>
+                <div id="console-output"></div>
+            </div>
+        </section>
+        
+        <!-- Часть 2: Курсы валют (теперь это Часть 2) -->
+        <section class="section">
+            <h2>Часть 2: Курсы валют от Belarusbank</h2>
+            <p>Текущие курсы валют, полученные с API Belarusbank. Данные обновляются при каждом нажатии кнопки.</p>
+            
+            <button id="loadCurrencyBtn" class="btn">Загрузить курсы валют</button>
+            <button id="loadCurrencyLocalBtn" class="btn" style="margin-left: 10px; background-color: var(--blue-accent);">Загрузить демо-курсы</button>
+            
+            <div class="currency-grid" id="currency-container">
+                <!-- Курсы валют будут загружены сюда -->
+            </div>
+        </section>
+        
+        <!-- Часть 3: Форма обратной связи (теперь это Часть 3) -->
+        <section class="section">
+            <h2>Часть 3: Форма обратной связи</h2>
+            <p>Пожалуйста, оставьте ваш отзыв о данной демонстрации. Данные будут отправлены через сервис GetForm.io.</p>
+            
+            <div class="feedback-form">
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="name">Ваше имя:</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Ваш email:</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Оценка: <span id="ratingText" style="color: var(--blue-dark); font-weight: 600;">(ещё не оценено)</span></label>
+                        <div class="rating">
+                            <div class="rating-stars" id="ratingStars">
+                                <input type="radio" id="star5" name="rating" value="5">
+                                <label for="star5" title="Отлично">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4" title="Хорошо">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3" title="Удовлетворительно">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2" title="Плохо">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1" title="Очень плохо">★</label>
+                            </div>
+                            <div class="rating-value" id="ratingValue"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Ваш отзыв:</label>
+                        <textarea id="message" name="message" class="form-control" placeholder="Расскажите, что вам понравилось или что можно улучшить..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Отправить отзыв</button>
+                    <div id="formStatus" style="margin-top: 15px;"></div>
+                </form>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Страница для вдохновения: <a href="https://www.mapstd.com/" class="inspiration-link" target="_blank">Mapstd.com</a> - интерактивные карты и адреса</p>
+            <p>Демонстрация асинхронного JavaScript и работы с API © 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Часть 1: Асинхронные функции с await
+        console.log("Скрипт загружен");
+        
+        // Функция для загрузки фото разработчика
+        function loadDeveloperPhoto() {
+            const photo = document.getElementById('developerPhoto');
+            
+            // Сначала попробуем загрузить из текущей директории
+            const photoPaths = [
+                'stolica.jpg', // текущая директория
+                'images/stolica.jpg', // папка images
+                'photo/stolica.jpg', // папка photo
+                '../stolica.jpg' // на уровень выше
+            ];
+            
+            // Счетчик попыток
+            let currentAttempt = 0;
+            
+            function tryNextPath() {
+                if (currentAttempt >= photoPaths.length) {
+                    // Если все пути не сработали, создаем простой placeholder
+                    console.log("Фото не найдено, создаем простой placeholder");
+                    createSimplePlaceholder();
+                    return;
+                }
+                
+                const path = photoPaths[currentAttempt];
+                console.log(`Попытка загрузки фото из: ${path}`);
+                
+                const testImage = new Image();
+                testImage.onload = function() {
+                    console.log(`Фото успешно загружено из: ${path}`);
+                    photo.src = path;
+                    photo.alt = 'Николаева Наталья';
+                };
+                
+                testImage.onerror = function() {
+                    console.log(`Не удалось загрузить фото из: ${path}`);
+                    currentAttempt++;
+                    tryNextPath();
+                };
+                
+                testImage.src = path;
+            }
+            
+            // Начинаем попытки загрузки
+            tryNextPath();
+        }
+        
+        // Функция для создания простого placeholder
+        function createSimplePlaceholder() {
+            const photo = document.getElementById('developerPhoto');
+            
+            // Создаем простой SVG placeholder
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="70" fill="#1a5276" stroke="white" stroke-width="4"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-family="Arial" font-size="30" font-weight="bold">НН</text>
+                </svg>
+            `;
+            
+            const blob = new Blob([svg], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            
+            photo.src = url;
+            photo.alt = 'Николаева Наталья (заглушка)';
+            
+            // Очищаем URL после загрузки
+            photo.onload = function() {
+                URL.revokeObjectURL(url);
+            };
+        }
+        
+        // Функция для логирования в консоль на странице
+        function logToConsole(message, type = "info") {
+            const consoleOutput = document.getElementById('console-output');
+            const time = new Date().toLocaleTimeString();
+            const messageElement = document.createElement('div');
+            messageElement.className = 'console-line';
+            
+            let color = "white";
+            if (type === "error") color = "#e74c3c";
+            else if (type === "success") color = "#2ecc71";
+            else if (type === "warning") color = "#f39c12";
+            
+            messageElement.innerHTML = `
+                <span class="console-time">[${time}]</span>
+                <span class="console-message" style="color: ${color}">${message}</span>
+            `;
+            
+            consoleOutput.appendChild(messageElement);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        // Функция для обновления прогресс-бара
+        function updateProgress(taskId, progress) {
+            const progressBar = document.getElementById(`task${taskId}-progress`);
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+        
+        // Асинхронная функция 1: Имитация загрузки профиля пользователя
+        async function loadUserProfile() {
+            logToConsole("Задача 1: Начало загрузки профиля пользователя...", "info");
+            document.getElementById('task1-status').className = 'status loading';
+            document.getElementById('task1-status').textContent = 'Выполняется...';
+            
+            // Имитация асинхронной операции с прогрессом
+            for (let i = 0; i <= 100; i += 20) {
+                updateProgress(1, i);
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            logToConsole("Задача 1: Профиль пользователя успешно загружен!", "success");
+            document.getElementById('task1-status').className = 'status completed';
+            document.getElementById('task1-status').textContent = 'Завершено';
+            
+            return { name: "Иван Иванов", email: "ivan@example.com", id: 12345 };
+        }
+        
+        // Асинхронная функция 2: Имитация загрузки истории заказов
+        async function loadOrderHistory() {
+            logToConsole("Задача 2: Начало загрузки истории заказов...", "info");
+            document.getElementById('task2-status').className = 'status loading';
+            document.getElementById('task2-status').textContent = 'Выполняется...';
+            
+            // Имитация асинхронной операции с прогрессом
+            for (let i = 0; i <= 100; i += 10) {
+                updateProgress(2, i);
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            
+            logToConsole("Задача 2: История заказов успешно загружена!", "success");
+            document.getElementById('task2-status').className = 'status completed';
+            document.getElementById('task2-status').textContent = 'Завершено';
+            
+            return { orders: 5, totalAmount: 12500, lastOrder: "2023-10-15" };
+        }
+        
+        // Асинхронная функция 3: Имитация загрузки рекомендаций
+        async function loadRecommendations() {
+            logToConsole("Задача 3: Начало загрузки персональных рекомендаций...", "info");
+            document.getElementById('task3-status').className = 'status loading';
+            document.getElementById('task3-status').textContent = 'Выполняется...';
+            
+            // Имитация асинхронной операции с прогрессом
+            for (let i = 0; i <= 100; i += 25) {
+                updateProgress(3, i);
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            logToConsole("Задача 3: Рекомендации успешно загружены!", "success");
+            document.getElementById('task3-status').className = 'status completed';
+            document.getElementById('task3-status').textContent = 'Завершено';
+            
+            return { recommendations: ["Товар A", "Товар B", "Товар C"] };
+        }
+        
+        // Функция для запуска оставшихся задач (задача 2 и 3)
+        async function runRemainingTasks() {
+            logToConsole("=== Начало выполнения оставшихся задач ===", "success");
+            
+            // Сбросим статусы и прогресс-бары для задач 2 и 3
+            document.getElementById('task2-status').className = 'status pending';
+            document.getElementById('task2-status').textContent = 'Ожидание запуска';
+            document.getElementById('task3-status').className = 'status pending';
+            document.getElementById('task3-status').textContent = 'Ожидание запуска';
+            
+            document.getElementById('task2-progress').style.width = '0%';
+            document.getElementById('task3-progress').style.width = '0%';
+            
+            // Отключаем кнопку на время выполнения
+            const runBtn = document.getElementById('runRemainingTasksBtn');
+            const originalText = runBtn.textContent;
+            runBtn.textContent = 'Выполняется...';
+            runBtn.disabled = true;
+            
+            try {
+                // Запускаем задачи последовательно с использованием await
+                const orderHistory = await loadOrderHistory();
+                logToConsole(`Загружено заказов: ${orderHistory.orders} на сумму ${orderHistory.totalAmount}`, "info");
+                
+                const recommendations = await loadRecommendations();
+                logToConsole(`Получено рекомендаций: ${recommendations.recommendations.length}`, "info");
+                
+                logToConsole("=== Все оставшиеся задачи успешно завершены! ===", "success");
+            } catch (error) {
+                logToConsole(`Ошибка при выполнении задач: ${error.message}`, "error");
+            } finally {
+                // Восстанавливаем кнопку
+                runBtn.textContent = originalText;
+                runBtn.disabled = false;
+            }
+        }
+        
+        // Часть 2: Получение курсов валют - РАБОТАЮЩАЯ ВЕРСИЯ
+        async function loadCurrencyRates() {
+            const currencyContainer = document.getElementById('currency-container');
+            currencyContainer.innerHTML = '<div class="currency-card"><div class="currency-name">Загрузка...</div><div class="currency-rate">...</div></div>';
+            
+            try {
+                logToConsole("Загрузка курсов валют с API Belarusbank...", "info");
+                
+                // Используем API Belarusbank напрямую
+                const apiUrl = 'https://belarusbank.by/api/kursExchange?city=Минск';
+                
+                // Пробуем разные подходы для обхода CORS
+                let response;
+                
+                try {
+                    // Пытаемся получить данные напрямую
+                    response = await fetch(apiUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                } catch (directError) {
+                    logToConsole("Прямой запрос не удался, используем прокси...", "warning");
+                    
+                    // Используем CORS прокси
+                    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
+                    response = await fetch(proxyUrl);
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data || data.length === 0) {
+                    throw new Error('Нет данных о курсах валют');
+                }
+                
+                // Получаем первый элемент массива (данные по Минску)
+                const rates = data[0];
+                
+                // Форматируем и отображаем курсы валют
+                currencyContainer.innerHTML = '';
+                
+                // Основные валюты
+                const currencies = [
+                    { key: 'USD_in', name: 'USD покупка', symbol: 'USD' },
+                    { key: 'USD_out', name: 'USD продажа', symbol: 'USD' },
+                    { key: 'EUR_in', name: 'EUR покупка', symbol: 'EUR' },
+                    { key: 'EUR_out', name: 'EUR продажа', symbol: 'EUR' },
+                    { key: 'RUB_in', name: 'RUB покупка', symbol: 'RUB' },
+                    { key: 'RUB_out', name: 'RUB продажа', symbol: 'RUB' }
+                ];
+                
+                // Фильтруем только те валюты, которые есть в ответе
+                const availableCurrencies = currencies.filter(currency => rates[currency.key]);
+                
+                if (availableCurrencies.length === 0) {
+                    // Если нет данных, показываем демо-данные
+                    loadDemoCurrencyRates();
+                    logToConsole("API не вернуло данных о курсах валют. Показаны демо-данные.", "warning");
+                    return;
+                }
+                
+                availableCurrencies.forEach(currency => {
+                    const rate = parseFloat(rates[currency.key]);
+                    const change = (Math.random() - 0.5) * 0.02; // Небольшое изменение для демонстрации
+                    const changeFormatted = change.toFixed(4);
+                    
+                    const currencyElement = document.createElement('div');
+                    currencyElement.className = 'currency-card';
+                    currencyElement.innerHTML = `
+                        <div class="currency-name">${currency.name}</div>
+                        <div class="currency-rate">${rate.toFixed(4)}</div>
+                        <div class="currency-change ${change >= 0 ? 'positive' : 'negative'}">
+                            ${change >= 0 ? '+' : ''}${changeFormatted}
+                        </div>
+                    `;
+                    currencyContainer.appendChild(currencyElement);
+                });
+                
+                logToConsole(`Загружено ${availableCurrencies.length} курсов валют с Belarusbank API`, "success");
+                
+            } catch (error) {
+                logToConsole(`Ошибка при загрузке курсов валют: ${error.message}`, "error");
+                logToConsole("Показываю демо-данные...", "warning");
+                
+                // В случае ошибки показываем демо-данные
+                loadDemoCurrencyRates();
+            }
+        }
+        
+        // Функция для загрузки демо-курсов валют
+        function loadDemoCurrencyRates() {
+            const currencyContainer = document.getElementById('currency-container');
+            
+            // Демо-данные курсов валют
+            const demoCurrencies = [
+                { name: 'USD покупка', rate: 3.2550, change: 0.0025 },
+                { name: 'USD продажа', rate: 3.2650, change: 0.0015 },
+                { name: 'EUR покупка', rate: 3.5010, change: -0.0010 },
+                { name: 'EUR продажа', rate: 3.5110, change: -0.0005 },
+                { name: 'RUB покупка', rate: 0.0351, change: 0.0002 },
+                { name: 'RUB продажа', rate: 0.0361, change: 0.0001 }
+            ];
+            
+            currencyContainer.innerHTML = '';
+            
+            demoCurrencies.forEach(currency => {
+                const currencyElement = document.createElement('div');
+                currencyElement.className = 'currency-card';
+                currencyElement.innerHTML = `
+                    <div class="currency-name">${currency.name}</div>
+                    <div class="currency-rate">${currency.rate.toFixed(4)}</div>
+                    <div class="currency-change ${currency.change >= 0 ? 'positive' : 'negative'}">
+                        ${currency.change >= 0 ? '+' : ''}${currency.change.toFixed(4)}
+                    </div>
+                `;
+                currencyContainer.appendChild(currencyElement);
+            });
+            
+            // Добавляем информационную карточку
+            const infoCard = document.createElement('div');
+            infoCard.className = 'currency-card';
+            infoCard.style.border = '2px dashed var(--blue-light)';
+            infoCard.innerHTML = `
+                <div class="currency-name" style="color: var(--blue-dark)">Демо-данные</div>
+                <div class="currency-rate">API Belarusbank</div>
+                <div class="currency-change">Для реальных данных проверьте CORS настройки</div>
+            `;
+            currencyContainer.appendChild(infoCard);
+        }
+        
+        // Обработчик для рейтинга звёзд
+        function setupRating() {
+            const ratingStars = document.getElementById('ratingStars');
+            const ratingText = document.getElementById('ratingText');
+            const ratingValue = document.getElementById('ratingValue');
+            const starInputs = ratingStars.querySelectorAll('input[type="radio"]');
+            
+            // Обработчик клика по звезде
+            ratingStars.addEventListener('click', function(e) {
+                if (e.target.tagName === 'LABEL' || e.target.tagName === 'INPUT') {
+                    const star = e.target.closest('label')?.htmlFor ? 
+                                document.getElementById(e.target.closest('label').htmlFor) : e.target;
+                    
+                    if (star && star.type === 'radio') {
+                        updateRatingDisplay(star.value);
+                    }
+                }
+            });
+            
+            // Обработчик наведения на звезды
+            ratingStars.querySelectorAll('label').forEach(label => {
+                label.addEventListener('mouseenter', function() {
+                    if (!ratingStars.classList.contains('disabled')) {
+                        const value = this.htmlFor.replace('star', '');
+                        previewRating(value);
+                    }
+                });
+                
+                label.addEventListener('mouseleave', function() {
+                    if (!ratingStars.classList.contains('disabled')) {
+                        const selectedStar = ratingStars.querySelector('input:checked');
+                        if (selectedStar) {
+                            updateRatingDisplay(selectedStar.value);
+                        } else {
+                            resetRatingDisplay();
+                        }
+                    }
+                });
+            });
+            
+            function updateRatingDisplay(value) {
+                // Обновляем текстовое отображение
+                const ratingTexts = {
+                    '1': 'Очень плохо',
+                    '2': 'Плохо',
+                    '3': 'Удовлетворительно',
+                    '4': 'Хорошо',
+                    '5': 'Отлично'
+                };
+                
+                ratingText.textContent = `${value}/5 - ${ratingTexts[value]}`;
+                ratingValue.textContent = `${value}/5`;
+                
+                // Добавляем визуальный класс для выбранной оценки
+                ratingStars.querySelectorAll('label').forEach((label, index) => {
+                    if (5 - index <= value) {
+                        label.style.color = '#ffc107';
+                    } else {
+                        label.style.color = 'var(--gray)';
+                    }
+                });
+            }
+            
+            function previewRating(value) {
+                ratingStars.querySelectorAll('label').forEach((label, index) => {
+                    if (5 - index <= value) {
+                        label.style.color = '#ffc107';
+                    } else {
+                        label.style.color = 'var(--gray)';
+                    }
+                });
+            }
+            
+            function resetRatingDisplay() {
+                ratingText.textContent = '(ещё не оценено)';
+                ratingValue.textContent = '';
+                ratingStars.querySelectorAll('label').forEach(label => {
+                    label.style.color = 'var(--gray)';
+                });
+            }
+            
+            // Сброс рейтинга при сбросе формы
+            document.getElementById('feedbackForm').addEventListener('reset', function() {
+                resetRatingDisplay();
+                ratingStars.classList.remove('disabled');
+            });
+            
+            // Изначально сбрасываем отображение
+            resetRatingDisplay();
+        }
+        
+        // Часть 3: Форма обратной связи - РЕАЛЬНАЯ отправка на GetForm.io
+        // Ваш реальный endpoint GetForm.io
+        const GETFORM_ENDPOINT = "https://getform.io/f/bgdvlgma";
+        
+        async function submitFeedback(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('feedbackForm');
+            const formStatus = document.getElementById('formStatus');
+            const ratingStars = document.getElementById('ratingStars');
+            
+            // Проверяем, выбран ли рейтинг
+            const rating = form.querySelector('input[name="rating"]:checked');
+            if (!rating) {
+                formStatus.textContent = "Пожалуйста, выберите оценку (от 1 до 5 звезд)";
+                formStatus.style.color = "var(--red)";
+                return;
+            }
+            
+            // Собираем данные формы
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                rating: rating.value,
+                message: formData.get('message'),
+                page: "Асинхронные функции и API демо",
+                timestamp: new Date().toISOString()
+            };
+            
+            formStatus.textContent = "Отправка отзыва...";
+            formStatus.style.color = "var(--blue-light)";
+            
+            // Отключаем взаимодействие с рейтингом во время отправки
+            ratingStars.classList.add('disabled');
+            
+            try {
+                // РЕАЛЬНАЯ отправка на GetForm.io
+                const response = await fetch(GETFORM_ENDPOINT, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+                
+                formStatus.textContent = "Спасибо! Ваш отзыв успешно отправлен.";
+                formStatus.style.color = "#27ae60";
+                
+                // Логируем отправку
+                logToConsole(`Отправлен отзыв от ${data.name} (оценка: ${data.rating}/5)`, "success");
+                
+                // Сбрасываем форму
+                form.reset();
+                setupRating(); // Сбрасываем отображение рейтинга
+                
+            } catch (error) {
+                formStatus.textContent = `Ошибка при отправке: ${error.message}`;
+                formStatus.style.color = "var(--red)";
+                ratingStars.classList.remove('disabled');
+                
+                logToConsole(`Ошибка отправки отзыва: ${error.message}`, "error");
+                
+                // Если ошибка, предлагаем альтернативу
+                setTimeout(() => {
+                    if (formStatus.textContent.includes("Ошибка")) {
+                        formStatus.innerHTML += '<br><small>Попробуйте отправить позже или свяжитесь другим способом.</small>';
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Инициализация событий после загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем фото разработчика сразу при загрузке страницы
+            loadDeveloperPhoto();
+            
+            // Привязываем обработчики событий
+            document.getElementById('runRemainingTasksBtn').addEventListener('click', runRemainingTasks);
+            document.getElementById('loadCurrencyBtn').addEventListener('click', loadCurrencyRates);
+            document.getElementById('loadCurrencyLocalBtn').addEventListener('click', loadDemoCurrencyRates);
+            document.getElementById('feedbackForm').addEventListener('submit', submitFeedback);
+            
+            // Инициализируем рейтинг
+            setupRating();
+            
+            // Автоматически загружаем профиль пользователя при загрузке страницы
+            setTimeout(() => {
+                loadUserProfile();
+            }, 1000);
+            
+            // Автоматически загружаем курсы валют при загрузке страницы
+            setTimeout(loadCurrencyRates, 1500);
+            
+            logToConsole("Страница загружена. Загрузка профиля пользователя...", "success");
+            
+            // Добавляем эффект при наведении на кнопки
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
