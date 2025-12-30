@@ -28,17 +28,30 @@
             background-color: var(--white);
             color: var(--black);
             line-height: 1.6;
-            padding-bottom: 40px;
-            /* Новый фон с текстурами снежинок */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             background-image: url('https://textur.gas-kvas.com/uploads/posts/2024-10/textur-gas-kvas-com-hmet-p-teksturi-snezhinki-4.jpg');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
-            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
@@ -53,43 +66,58 @@
             position: relative;
             overflow: hidden;
             border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            text-align: center;
         }
         
         .header-content {
             position: relative;
             z-index: 2;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            justify-content: center;
         }
         
         .developer-info {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 25px;
             margin-bottom: 20px;
             width: 100%;
         }
         
-        .developer-photo {
+        .developer-photo-container {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            object-fit: cover;
             border: 4px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #f0f0f0;
+            margin: 0 auto;
+        }
+        
+        .developer-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
         
         .developer-photo:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
         }
         
         .developer-text {
-            flex: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
         .developer-text h2 {
@@ -103,6 +131,7 @@
             font-size: 1.2rem;
             opacity: 0.9;
             max-width: 600px;
+            margin: 0 auto;
         }
         
         .page-title {
@@ -127,14 +156,15 @@
         }
         
         .section {
-            background-color: var(--overlay-color);
+            background-color: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
             padding: 30px;
             margin-bottom: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border-top: 5px solid var(--blue-light);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            backdrop-filter: blur(3px);
+            width: 100%;
+            text-align: left;
         }
         
         .section:hover {
@@ -147,6 +177,7 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid rgba(189, 195, 199, 0.5);
+            text-align: center;
         }
         
         .btn {
@@ -161,6 +192,9 @@
             transition: all 0.3s ease;
             margin-top: 15px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .btn:hover {
@@ -182,6 +216,7 @@
             padding: 20px;
             border-left: 4px solid var(--blue-light);
             transition: transform 0.3s ease;
+            text-align: left;
         }
         
         .task-card:hover {
@@ -232,6 +267,7 @@
             overflow-y: auto;
             margin-top: 20px;
             background-color: rgba(44, 62, 80, 0.95);
+            text-align: left;
         }
         
         .console-line {
@@ -254,6 +290,7 @@
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 20px;
+            justify-items: center;
         }
         
         .currency-card {
@@ -264,6 +301,8 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(26, 82, 118, 0.1);
             transition: transform 0.3s ease;
+            width: 100%;
+            max-width: 250px;
         }
         
         .currency-card:hover {
@@ -306,6 +345,7 @@
         
         .form-group {
             margin-bottom: 20px;
+            text-align: left;
         }
         
         .form-group label {
@@ -342,12 +382,13 @@
             gap: 10px;
             margin-top: 5px;
             align-items: center;
+            justify-content: center;
         }
         
         .rating-stars {
             display: flex;
             flex-direction: row-reverse;
-            justify-content: flex-end;
+            justify-content: center;
             gap: 5px;
         }
         
@@ -393,6 +434,7 @@
             border-top: 1px solid rgba(189, 195, 199, 0.5);
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
+            width: 100%;
         }
         
         .inspiration-link {
@@ -408,12 +450,21 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .task-container {
                 grid-template-columns: 1fr;
             }
             
             .currency-grid {
                 grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+            }
+            
+            .currency-card {
+                max-width: 100%;
             }
             
             .section {
@@ -424,22 +475,13 @@
                 font-size: 2rem;
             }
             
-            .developer-info {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .developer-photo {
+            .developer-photo-container {
                 width: 120px;
                 height: 120px;
             }
             
-            .header-content {
-                flex-direction: column;
-            }
-            
-            body {
-                background-attachment: scroll;
+            .container {
+                padding: 0 10px;
             }
         }
         
@@ -477,188 +519,202 @@
             color: #333;
         }
         
-        /* Увеличим прозрачность секций для лучшей читаемости на новом фоне */
-        .task-card, .currency-card, .feedback-form, .console {
-            background-color: rgba(255, 255, 255, 0.95);
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         
-        .section {
-            background-color: rgba(255, 255, 255, 0.95);
+        .button-group .btn {
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="developer-info">
-                    <!-- Изображение будет загружено через JavaScript -->
-                    <img id="developerPhoto" alt="Николаева Наталья" class="developer-photo">
-                    <div class="developer-text">
-                        <h2>Николаева Наталья</h2>
-                        <p>Full-stack разработчик с опытом работы с современными веб-технологиями и асинхронным программированием</p>
-                        <!-- Удален блок с надписями навыков -->
-                    </div>
-                </div>
-                
-                <div class="page-title">
-                    <h1>Асинхронные функции и работа с API</h1>
-                    <p class="subtitle">Демонстрация асинхронного JavaScript, получения данных с API и формы обратной связи</p>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <div class="container">
-        <!-- Секция 1: Асинхронные задачи -->
-        <section class="section">
-            <h2>Часть 1: Асинхронные функции с await</h2>
-            <p>Профиль пользователя загружается автоматически при загрузке страницы. Нажмите кнопку, чтобы запустить оставшиеся две задачи последовательно.</p>
-            
-            <div class="task-container">
-                <div class="task-card">
-                    <h3>Задача 1: Загрузка профиля пользователя</h3>
-                    <p>Имитирует загрузку данных профиля пользователя с сервера.</p>
-                    <div id="task1-status" class="status pending">Загрузка...</div>
-                    <div class="progress-bar">
-                        <div id="task1-progress" class="progress"></div>
-                    </div>
-                </div>
-                
-                <div class="task-card">
-                    <h3>Задача 2: Загрузка истории заказов</h3>
-                    <p>Имитирует загрузку истории заказов пользователя.</p>
-                    <div id="task2-status" class="status pending">Ожидание запуска</div>
-                    <div class="progress-bar">
-                        <div id="task2-progress" class="progress"></div>
-                    </div>
-                </div>
-                
-                <div class="task-card">
-                    <h3>Задача 3: Загрузка рекомендаций</h3>
-                    <p>Имитирует загрузку персональных рекомендаций.</p>
-                    <div id="task3-status" class="status pending">Ожидание запуска</div>
-                    <div class="progress-bar">
-                        <div id="task3-progress" class="progress"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="runRemainingTasksBtn" class="btn">Запустить оставшиеся задачи</button>
-            
-            <div class="console">
-                <h3>Консоль выполнения:</h3>
-                <div id="console-output"></div>
-            </div>
-        </section>
-        
-        <!-- Часть 2: Курсы валют (теперь это Часть 2) -->
-        <section class="section">
-            <h2>Часть 2: Курсы валют от Belarusbank</h2>
-            <p>Текущие курсы валют, полученные с API Belarusbank. Данные обновляются при каждом нажатии кнопки.</p>
-            
-            <button id="loadCurrencyBtn" class="btn">Загрузить курсы валют</button>
-            <button id="loadCurrencyLocalBtn" class="btn" style="margin-left: 10px; background-color: var(--blue-accent);">Загрузить демо-курсы</button>
-            
-            <div class="currency-grid" id="currency-container">
-                <!-- Курсы валют будут загружены сюда -->
-            </div>
-        </section>
-        
-        <!-- Часть 3: Форма обратной связи (теперь это Часть 3) -->
-        <section class="section">
-            <h2>Часть 3: Форма обратной связи</h2>
-            <p>Пожалуйста, оставьте ваш отзыв о данной демонстрации. Данные будут отправлены через сервис GetForm.io.</p>
-            
-            <div class="feedback-form">
-                <form id="feedbackForm">
-                    <div class="form-group">
-                        <label for="name">Ваше имя:</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Ваш email:</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Оценка: <span id="ratingText" style="color: var(--blue-dark); font-weight: 600;">(ещё не оценено)</span></label>
-                        <div class="rating">
-                            <div class="rating-stars" id="ratingStars">
-                                <input type="radio" id="star5" name="rating" value="5">
-                                <label for="star5" title="Отлично">★</label>
-                                <input type="radio" id="star4" name="rating" value="4">
-                                <label for="star4" title="Хорошо">★</label>
-                                <input type="radio" id="star3" name="rating" value="3">
-                                <label for="star3" title="Удовлетворительно">★</label>
-                                <input type="radio" id="star2" name="rating" value="2">
-                                <label for="star2" title="Плохо">★</label>
-                                <input type="radio" id="star1" name="rating" value="1">
-                                <label for="star1" title="Очень плохо">★</label>
-                            </div>
-                            <div class="rating-value" id="ratingValue"></div>
+    <div class="main-container">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="developer-info">
+                        <div class="developer-photo-container">
+                            <img id="developerPhoto" alt="Николаева Наталья" class="developer-photo">
+                        </div>
+                        <div class="developer-text">
+                            <h2>Николаева Наталья</h2>
+                            <p>Full-stack разработчик с опытом работы с современными веб-технологиями и асинхронным программированием</p>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="message">Ваш отзыв:</label>
-                        <textarea id="message" name="message" class="form-control" placeholder="Расскажите, что вам понравилось или что можно улучшить..." required></textarea>
+                    <div class="page-title">
+                        <h1>Асинхронные функции и работа с API</h1>
+                        <p class="subtitle">Демонстрация асинхронного JavaScript, получения данных с API и формы обратной связи</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <!-- Секция 1: Асинхронные задачи -->
+            <section class="section">
+                <h2>Часть 1: Асинхронные функции с await</h2>
+                <p>Профиль пользователя загружается автоматически при загрузке страницы. Нажмите кнопку, чтобы запустить оставшиеся две задачи последовательно.</p>
+                
+                <div class="task-container">
+                    <div class="task-card">
+                        <h3>Задача 1: Загрузка профиля пользователя</h3>
+                        <p>Имитирует загрузку данных профиля пользователя с сервера.</p>
+                        <div id="task1-status" class="status pending">Загрузка...</div>
+                        <div class="progress-bar">
+                            <div id="task1-progress" class="progress"></div>
+                        </div>
                     </div>
                     
-                    <button type="submit" class="btn">Отправить отзыв</button>
-                    <div id="formStatus" style="margin-top: 15px;"></div>
-                </form>
-            </div>
-        </section>
-        
-        <footer>
-            <p>Страница для вдохновения: <a href="https://www.mapstd.com/" class="inspiration-link" target="_blank">Mapstd.com</a> - интерактивные карты и адреса</p>
-            <p>Демонстрация асинхронного JavaScript и работы с API © 2023</p>
-        </footer>
+                    <div class="task-card">
+                        <h3>Задача 2: Загрузка истории заказов</h3>
+                        <p>Имитирует загрузку истории заказов пользователя.</p>
+                        <div id="task2-status" class="status pending">Ожидание запуска</div>
+                        <div class="progress-bar">
+                            <div id="task2-progress" class="progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <h3>Задача 3: Загрузка рекомендаций</h3>
+                        <p>Имитирует загрузку персональных рекомендаций.</p>
+                        <div id="task3-status" class="status pending">Ожидание запуска</div>
+                        <div class="progress-bar">
+                            <div id="task3-progress" class="progress"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="runRemainingTasksBtn" class="btn">Запустить оставшиеся задачи</button>
+                
+                <div class="console">
+                    <h3>Консоль выполнения:</h3>
+                    <div id="console-output"></div>
+                </div>
+            </section>
+            
+            <!-- Часть 2: Курсы валют (теперь это Часть 2) -->
+            <section class="section">
+                <h2>Часть 2: Курсы валют от Belarusbank</h2>
+                <p>Текущие курсы валют, полученные с API Belarusbank. Данные обновляются при каждом нажатии кнопки.</p>
+                
+                <div class="button-group">
+                    <button id="loadCurrencyBtn" class="btn">Загрузить курсы валют</button>
+                    <button id="loadCurrencyLocalBtn" class="btn" style="background-color: var(--blue-accent);">Загрузить демо-курсы</button>
+                </div>
+                
+                <div class="currency-grid" id="currency-container">
+                    <!-- Курсы валют будут загружены сюда -->
+                </div>
+            </section>
+            
+            <!-- Часть 3: Форма обратной связи (теперь это Часть 3) -->
+            <section class="section">
+                <h2>Часть 3: Форма обратной связи</h2>
+                <p>Пожалуйста, оставьте ваш отзыв о данной демонстрации. Данные будут отправлены через сервис GetForm.io.</p>
+                
+                <div class="feedback-form">
+                    <form id="feedbackForm">
+                        <div class="form-group">
+                            <label for="name">Ваше имя:</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Ваш email:</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Оценка: <span id="ratingText" style="color: var(--blue-dark); font-weight: 600;">(ещё не оценено)</span></label>
+                            <div class="rating">
+                                <div class="rating-stars" id="ratingStars">
+                                    <input type="radio" id="star5" name="rating" value="5">
+                                    <label for="star5" title="Отлично">★</label>
+                                    <input type="radio" id="star4" name="rating" value="4">
+                                    <label for="star4" title="Хорошо">★</label>
+                                    <input type="radio" id="star3" name="rating" value="3">
+                                    <label for="star3" title="Удовлетворительно">★</label>
+                                    <input type="radio" id="star2" name="rating" value="2">
+                                    <label for="star2" title="Плохо">★</label>
+                                    <input type="radio" id="star1" name="rating" value="1">
+                                    <label for="star1" title="Очень плохо">★</label>
+                                </div>
+                                <div class="rating-value" id="ratingValue"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Ваш отзыв:</label>
+                            <textarea id="message" name="message" class="form-control" placeholder="Расскажите, что вам понравилось или что можно улучшить..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Отправить отзыв</button>
+                        <div id="formStatus" style="margin-top: 15px; text-align: center;"></div>
+                    </form>
+                </div>
+            </section>
+            
+            <footer>
+                <p>Страница для вдохновения: <a href="https://www.mapstd.com/" class="inspiration-link" target="_blank">Mapstd.com</a> - интерактивные карты и адреса</p>
+                <p>Демонстрация асинхронного JavaScript и работы с API © 2023</p>
+            </footer>
+        </div>
     </div>
 
     <script>
-        // Часть 1: Асинхронные функции с await
-        console.log("Скрипт загружен");
-        
-        // Функция для загрузки фото разработчика
+        // Упрощенная и улучшенная функция для загрузки фото разработчика
         function loadDeveloperPhoto() {
             const photo = document.getElementById('developerPhoto');
             
-            // Сначала попробуем загрузить из текущей директории
+            // Пробуем загрузить изображение stolica.jpg
+            // Сначала проверяем разные возможные пути
             const photoPaths = [
-                'stolica.jpg', // текущая директория
-                'images/stolica.jpg', // папка images
-                'photo/stolica.jpg', // папка photo
-                '../stolica.jpg' // на уровень выше
+                'stolica.jpg',
+                './stolica.jpg',
+                'images/stolica.jpg',
+                'photo/stolica.jpg',
+                '../stolica.jpg',
+                'https://via.placeholder.com/150/1a5276/FFFFFF?text=НН' // Запасной вариант
             ];
             
-            // Счетчик попыток
             let currentAttempt = 0;
             
             function tryNextPath() {
                 if (currentAttempt >= photoPaths.length) {
-                    // Если все пути не сработали, создаем простой placeholder
-                    console.log("Фото не найдено, создаем простой placeholder");
-                    createSimplePlaceholder();
+                    console.log("Все попытки загрузки фото не удались, создаем SVG-заглушку");
+                    createSVGPlaceholder();
                     return;
                 }
                 
                 const path = photoPaths[currentAttempt];
-                console.log(`Попытка загрузки фото из: ${path}`);
+                console.log(`Попытка загрузки фото: ${path}`);
                 
                 const testImage = new Image();
+                
                 testImage.onload = function() {
-                    console.log(`Фото успешно загружено из: ${path}`);
+                    console.log(`Фото успешно загружено: ${path}`);
                     photo.src = path;
                     photo.alt = 'Николаева Наталья';
+                    
+                    // Если это placeholder, делаем его квадратным
+                    if (path.includes('placeholder.com')) {
+                        photo.style.objectFit = 'contain';
+                        photo.style.backgroundColor = '#1a5276';
+                    }
                 };
                 
                 testImage.onerror = function() {
-                    console.log(`Не удалось загрузить фото из: ${path}`);
+                    console.log(`Не удалось загрузить фото: ${path}`);
                     currentAttempt++;
-                    tryNextPath();
+                    
+                    // Попробовать следующий путь через небольшую задержку
+                    setTimeout(tryNextPath, 100);
                 };
                 
                 testImage.src = path;
@@ -668,20 +724,28 @@
             tryNextPath();
         }
         
-        // Функция для создания простого placeholder
-        function createSimplePlaceholder() {
+        // Функция для создания SVG placeholder
+        function createSVGPlaceholder() {
             const photo = document.getElementById('developerPhoto');
+            const container = document.querySelector('.developer-photo-container');
             
             // Создаем простой SVG placeholder
-            const svg = `
+            const svgContent = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="70" fill="#1a5276" stroke="white" stroke-width="4"/>
-                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-family="Arial" font-size="30" font-weight="bold">НН</text>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1a5276;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0d3b5c;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="75" cy="75" r="70" fill="url(#gradient)" stroke="white" stroke-width="4"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-family="Arial" font-size="36" font-weight="bold">НН</text>
                 </svg>
             `;
             
-            const blob = new Blob([svg], {type: 'image/svg+xml'});
-            const url = URL.createObjectURL(blob);
+            // Преобразуем SVG в Data URL
+            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
             
             photo.src = url;
             photo.alt = 'Николаева Наталья (заглушка)';
@@ -690,6 +754,9 @@
             photo.onload = function() {
                 URL.revokeObjectURL(url);
             };
+            
+            // Если фото не загрузилось, добавляем фон
+            container.style.backgroundColor = '#1a5276';
         }
         
         // Функция для логирования в консоль на странице
@@ -956,7 +1023,6 @@
             const ratingStars = document.getElementById('ratingStars');
             const ratingText = document.getElementById('ratingText');
             const ratingValue = document.getElementById('ratingValue');
-            const starInputs = ratingStars.querySelectorAll('input[type="radio"]');
             
             // Обработчик клика по звезде
             ratingStars.addEventListener('click', function(e) {
@@ -1043,7 +1109,6 @@
         }
         
         // Часть 3: Форма обратной связи - РЕАЛЬНАЯ отправка на GetForm.io
-        // Ваш реальный endpoint GetForm.io
         const GETFORM_ENDPOINT = "https://getform.io/f/bgdvlgma";
         
         async function submitFeedback(event) {
